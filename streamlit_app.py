@@ -10,7 +10,6 @@ from google_auth_oauthlib.flow import Flow
 from st_aggrid import AgGrid, GridUpdateMode, DataReturnMode
 from st_aggrid.grid_options_builder import GridOptionsBuilder
 from st_aggrid.shared import JsCode
-from streamlit_elements import Elements
 
 # Local application/library specific imports
 import searchconsole
@@ -68,24 +67,38 @@ with tab1:
 
         st.markdown("")
 
-        mt = Elements()
-
-        mt.button(
-            "Sign-in with Google",
-            target="_blank",
-            size="large",
-            variant="contained",
-            start_icon=mt.icons.exit_to_app,
-            onclick="none",
-            style={"color": "#FFFFFF", "background": "#FF4B4B"},
-            href="https://accounts.google.com/o/oauth2/auth?response_type=code&client_id="
-                 + clientId
-                 + "&redirect_uri="
-                 + redirectUri
-                 + "&scope=https://www.googleapis.com/auth/webmasters.readonly&access_type=offline&prompt=consent",
+        # Create Google Sign-in button using HTML/CSS instead of streamlit-elements
+        google_oauth_url = (
+            f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={clientId}"
+            f"&redirect_uri={redirectUri}"
+            f"&scope=https://www.googleapis.com/auth/webmasters.readonly&access_type=offline&prompt=consent"
         )
-
-        mt.show(key="687")
+        
+        st.markdown(
+            f"""
+            <a href="{google_oauth_url}" target="_blank" style="text-decoration: none;">
+                <button style="
+                    background-color: #FF4B4B;
+                    color: white;
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 4px;
+                    font-size: 16px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    margin: 10px 0;
+                ">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                        <path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                    </svg>
+                    Sign-in with Google
+                </button>
+            </a>
+            """,
+            unsafe_allow_html=True
+        )
 
         credentials = {
             "installed": {
@@ -840,7 +853,7 @@ with tab1:
 
     except IndexError:
         st.info(
-            "⛔ It seems you haven’t correctly configured Google Search Console! Click [here](https://support.google.com/webmasters/answer/9008080?hl=en) for more information on how to get started!"
+            "⛔ It seems you haven't correctly configured Google Search Console! Click [here](https://support.google.com/webmasters/answer/9008080?hl=en) for more information on how to get started!"
         )
 
 with tab2:
