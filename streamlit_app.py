@@ -59,8 +59,9 @@ with tab1:
     def charly_form_callback():
         # st.write(st.session_state.my_token_input)
         st.session_state.my_token_received = True
-        code = st.experimental_get_query_params()["code"][0]
-        st.session_state.my_token_input = code
+        if "code" in st.query_params:
+            code = st.query_params["code"]
+            st.session_state.my_token_input = code
 
 
     with st.sidebar.form(key="my_form"):
@@ -407,7 +408,7 @@ with tab1:
 
         if st.session_state.my_token_received == True:
 
-            @st.experimental_singleton
+            @st.cache_resource
             def get_account_site_list_and_webproperty(token):
                 flow.fetch_token(code=token)
                 credentials = flow.credentials
@@ -800,7 +801,7 @@ with tab1:
 
             if not check_box:
 
-                @st.cache
+                @st.cache_data
                 def convert_df(df):
                     return df.to_csv().encode("utf-8")
 
