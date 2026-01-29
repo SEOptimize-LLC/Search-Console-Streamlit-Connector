@@ -113,7 +113,8 @@ def get_credentials_from_code(auth_code):
         return flow.credentials
 
     except Exception as e:
-        st.error(f"Error exchanging code for credentials: {str(e)}")
+        # Don't display error here - let the caller handle it
+        # This prevents error messages from persisting across page loads
         return None
 
 def save_credentials(credentials):
@@ -283,20 +284,17 @@ def main():
     st.markdown('<div class="main-header">🔍 Google Search Console Connector</div>', 
                 unsafe_allow_html=True)
 
-    # Check for authorization code in URL parameters
-    auth_code = st.query_params.get("code")
-
-    # Load existing credentials
+    # Load existing credentials first
     credentials = load_credentials()
 
-    # Handle OAuth flow
+    # Handle OAuth callback
+    auth_code = st.query_params.get("code")
     if auth_code and not credentials:
-        with st.spinner("Processing authorization..."):
-            credentials = get_credentials_from_code(auth_code)
-            if credentials:
-                save_credentials(credentials)
-                st.success("✅ Successfully authenticated!")
-                st.rerun()
+        credentials = get_credentials_from_code(auth_code)
+        if credentials:
+            save_credentials(credentials)
+            st.query_params.clear()
+            st.rerun()
 
     # Authentication section
     if not credentials:
@@ -342,14 +340,6 @@ def main():
     # Sidebar configuration
     with st.sidebar:
         st.header("⚙️ Configuration")
-
-        # Logout button
-        if st.button("🚪 Logout"):
-            if "credentials" in st.session_state:
-                del st.session_state["credentials"]
-            st.rerun()
-
-        st.markdown("---")
 
         # Site selection
         selected_site = st.selectbox("🌐 Select Website", sites)
