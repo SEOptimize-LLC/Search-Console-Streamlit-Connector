@@ -342,7 +342,7 @@ def main():
         st.header("⚙️ Configuration")
 
         # Site selection
-        selected_site = st.selectbox("🌐 Select Website", sites)
+        selected_site = st.selectbox("🌐 Select Website", sites, key="selected_site")
 
         # Date range selection
         date_range = st.selectbox(
