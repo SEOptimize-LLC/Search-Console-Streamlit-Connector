@@ -429,7 +429,18 @@ def main():
         st.dataframe(df, use_container_width=True)
 
         # Download data
-        csv = df.to_csv(index=False)
+        # Format data for export
+        df_export = df.copy()
+
+        # Format CTR as percentage with 2 decimals
+        if 'ctr' in df_export.columns:
+            df_export['ctr'] = (df_export['ctr'] * 100).round(2).astype(str) + '%'
+
+        # Round position to 1 decimal place
+        if 'position' in df_export.columns:
+            df_export['position'] = df_export['position'].round(1)
+
+        csv = df_export.to_csv(index=False)
         st.download_button(
             label="💾 Download CSV",
             data=csv,
