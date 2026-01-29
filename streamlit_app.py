@@ -347,13 +347,17 @@ def main():
         # Date range selection
         date_range = st.selectbox(
             "📅 Date Range",
-            ["Last 7 days", "Last 30 days", "Last 3 months", "Custom range"]
+            ["Last 7 days", "Last 30 days", "Last 3 months", "Custom range"],
+            key="date_range"
         )
 
         if date_range == "Custom range":
-            start_date = st.date_input("Start Date", 
-                                     value=datetime.now() - timedelta(days=30))
-            end_date = st.date_input("End Date", value=datetime.now() - timedelta(days=1))
+            start_date = st.date_input("Start Date",
+                                     value=datetime.now() - timedelta(days=30),
+                                     key="start_date")
+            end_date = st.date_input("End Date",
+                                   value=datetime.now() - timedelta(days=1),
+                                   key="end_date")
         else:
             days = {"Last 7 days": 7, "Last 30 days": 30, "Last 3 months": 90}[date_range]
             end_date = datetime.now() - timedelta(days=1)
@@ -363,19 +367,19 @@ def main():
         st.markdown("### 📊 Dimensions")
         dimensions = []
 
-        if st.checkbox("Query", value=True):
+        if st.checkbox("Query", value=True, key="dim_query"):
             dimensions.append('query')
-        if st.checkbox("Page"):
+        if st.checkbox("Page", key="dim_page"):
             dimensions.append('page')
-        if st.checkbox("Date"):
+        if st.checkbox("Date", key="dim_date"):
             dimensions.append('date')
-        if st.checkbox("Country"):
+        if st.checkbox("Country", key="dim_country"):
             dimensions.append('country')
-        if st.checkbox("Device"):
+        if st.checkbox("Device", key="dim_device"):
             dimensions.append('device')
 
         # Row limit
-        max_rows = st.slider("Maximum Rows", 1000, 25000, 10000, 1000)
+        max_rows = st.slider("Maximum Rows", 1000, 25000, 10000, 1000, key="max_rows")
 
     # Main content
     if st.button("📊 Fetch Data", type="primary"):
